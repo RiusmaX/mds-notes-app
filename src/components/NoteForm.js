@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { addNote } from '../services/api'
+import { addNote, updateNote } from '../services/api'
 
 class NoteForm extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      title: '',
-      content: ''
+      title: props.noteToEdit ? props.noteToEdit.title : '',
+      content: props.noteToEdit ? props.noteToEdit.content : ''
     };
   }
 
@@ -20,7 +20,17 @@ class NoteForm extends React.Component {
   handleSubmit = async (e) => {
     e.preventDefault() // Empêcher le comportement naturel du navigateur
     console.log(`formulaire soumis ! ${this.state.title} ${this.state.content}`)
-    await addNote(this.state)
+    if (this.props.noteToEdit) {
+      const note = {
+        ...this.props.noteToEdit,
+        title: this.state.title,
+        content: this.state.content
+      }
+      await updateNote(note)
+    } else {
+      await addNote(this.state)
+    }
+    this.props.closeModal()
   }
 
   render() {
@@ -35,7 +45,7 @@ class NoteForm extends React.Component {
             Contenu : 
             <textarea name='content' onChange={this.handleChange} value={this.state.content} />
           </label>
-          <input type='submit' />
+          <input type='submit' value={this.props.noteToEdit ? 'Mettre à jour la note' : 'Ajouter la note'} />
         </form>
       </div>
     )

@@ -1,46 +1,36 @@
 import React from 'react';
 import Modal from 'react-modal'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from 'react-router-dom'
+
 import './App.css';
-import FAB from './components/FAB';
-import NoteList from './components/NoteList';
-import NoteModal from './components/NoteModal';
-import { getNotes } from './services/api'
+import Header from './components/Header';
+import About from './pages/About';
+import Home from './pages/Home';
+import Notes from './pages/Notes';
 
 Modal.setAppElement('#root')
 class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      notes: [],
-      isModalOpen: false
-    }
-  }
-
-  openModal = () => {
-    console.log('Open modal')
-    this.setState({isModalOpen: true})
-  }
-
-  closeModal = () => {
-    console.log('Close modal')
-    this.setState({isModalOpen: false})
-  }
-
-  componentDidMount() {
-    this.getData()
-  }
-
-  getData = async () => {
-    const notes = await getNotes()
-    this.setState({notes})
-  }
-
   render() {
     return (
       <div className="App">
-        <NoteModal isModalOpen={this.state.isModalOpen} closeModal={this.closeModal} />
-        <NoteList notes={this.state.notes} />
-        <FAB openModal={this.openModal} />
+        <Router>
+          <Header />
+          <Switch>
+            <Route path='/notes'>
+              <Notes />
+            </Route>
+            <Route path='/about'>
+              <About />
+            </Route>
+            <Route path='/'>
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
       </div>
     )
   }
